@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f3f6fb;
+}
+
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 0 15px;
+}
+
+.card { /* the main content box area*/
+  background-color: #ffffff;
+  border: 1px solid #d9e2ef;
+  border-top: 6px solid #0b1f3a;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+}
+
+/* label at the top, add navy blue line for looks */
+.kicker {
+  color: #0b1f3a;
+  font-size: 14px;
+  margin: 0 0 8px 0;
+}
+
+/* heading 1 */
+h1 {
+  margin: 0 0 10px 0;
+  color: #0b1f3a;
+  font-size: 36px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+
+/* heading 2 */
+h2 {
+  margin: 22px 0 10px 0;
+  color: #0b1f3a;
+  font-size: 20px;
+}
+/* ABout site paragraph text */
+.subtitle {
+  margin: 6px 0;
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.course {
+  margin: 14px 0 6px 0;
+  font-size: 14px;
+}
+
+/* site links */
+.nav {
+  margin: 10px 0 18px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.nav a {
+  margin-right: 14px;
+  text-decoration: none;
+  color: #0b1f3a;
+  font-weight: bold;
+}
+.nav a:hover {
+  text-decoration: underline;
+}
+/* paragraph */
+p {
+  color: #111827;
+  line-height: 1.6;
+}
+.nav a {
+  margin-right: 10px;
+  padding: 8px 14px;
+  background-color: #0b1f3a;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.nav a:hover {
+  background-color: #163a6b;
+}
+
