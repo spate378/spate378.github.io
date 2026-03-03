@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Milestone 1 - Single Book</title>
+  <title>Milestone 1 - Book Search Results</title>
 
-  <!-- Embedded CSS (required) -->
   <style>
     body{
       margin:0;
@@ -14,7 +13,7 @@
       color:#111827;
     }
     .container{
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 40px auto;
       padding: 0 16px;
     }
@@ -51,40 +50,54 @@
       font-weight:bold;
     }
     .grid{
-      display:flex;
-      gap:18px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
     }
-    .cover{
-      width: 220px;
-      min-width: 220px;
-    }
-    .cover img{
-      width:100%;
-      border-radius:10px;
+    .book{
       border:1px solid #e5e7eb;
-      background:#fff;
+      border-radius:12px;
+      background:#ffffff;
+      padding: 14px;
     }
-    .details{
-      flex:1;
-      min-width: 260px;
-    }
-    .row{
-      margin: 10px 0;
-      color:#111827;
-      line-height:1.5;
-    }
-    .label{
+    .book-title{
       font-weight:bold;
       color:#0b1f3a;
+      margin: 8px 0 6px;
+      line-height: 1.3;
     }
-    .desc{
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #e5e7eb;
-      line-height: 1.6;
-      color:#1f2937;
+    .book-meta{
+      font-size: 14px;
+      color:#374151;
+      line-height: 1.4;
+    }
+    .thumb{
+      width:100%;
+      max-height: 180px;
+      object-fit: contain;
+      border-radius:10px;
+      border:1px solid #f1f5f9;
+      background:#fff;
+    }
+    .snippet{
+      margin-top: 10px;
+      font-size: 14px;
+      color:#4b5563;
+      line-height: 1.5;
+    }
+    .links{
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .links a{
+      color:#1d4ed8;
+      text-decoration:none;
+      font-weight:bold;
+      margin-right: 10px;
+    }
+    .links a:hover{
+      text-decoration: underline;
     }
     .small{
       font-size: 13px;
@@ -96,27 +109,27 @@
       border:1px solid #fca5a5;
       border-radius:12px;
       padding:16px;
+      margin-top: 12px;
     }
     .error strong{ color:#991b1b; }
-    a{ color:#1d4ed8; }
   </style>
 
-  <!-- jQuery allowed (required for this milestone) -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
   <div class="container">
     <div class="card">
-      <h1>Milestone 1: Single Book Display</h1>
-      <p class="subtitle">This page reads <strong>google-books-book.json</strong> using JavaScript and jQuery and displays one book.</p>
+      <h1>Milestone 1: Book Search Results</h1>
+      <p class="subtitle">This page reads <strong>google-books-search.json</strong> using JavaScript and jQuery and displays multiple books using a loop.</p>
 
       <div class="nav">
         <a href="../index.html">Home</a>
-        <a href="search.html">Search Results Page</a>
+        <a href="books.html">Single Book Page</a>
       </div>
 
-      <div id="content">Loading book data...</div>
+      <div id="summary">Loading search results...</div>
+      <div id="results" class="grid"></div>
 
       <p class="small">
         Note: If this page is opened as a local file (file://), the JSON may not load. Test on your live GitHub Pages site.
@@ -124,69 +137,63 @@
     </div>
   </div>
 
-  <!-- Embedded JS (required) -->
   <script>
     $(function () {
-      $.getJSON("google-books-book.json")
+      $.getJSON("google-books-search.json")
         .done(function (data) {
-          // Google Books: single book usually has volumeInfo
-          var v = data.volumeInfo || {};
+          var items = data.items || [];
 
-          var title = v.title || "No title available";
-          var authors = (v.authors && v.authors.length) ? v.authors.join(", ") : "N/A";
-          var publisher = v.publisher || "N/A";
-          var publishedDate = v.publishedDate || "N/A";
-          var pageCount = v.pageCount || "N/A";
-          var categories = (v.categories && v.categories.length) ? v.categories.join(", ") : "N/A";
-          var language = v.language || "N/A";
-          var description = v.description || "No description available.";
+          $("#summary").html("Books found: <strong>" + items.length + "</strong>");
 
-          var previewLink = v.previewLink || "";
-          var infoLink = v.infoLink || "";
-
-          // Image (try several sizes)
-          var img = "";
-          if (v.imageLinks) {
-            img = v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || "";
+          if (items.length === 0) {
+            $("#results").html("<div>No books found in this JSON file.</div>");
+            return;
           }
 
-          var html = '';
-          html += '<div class="grid">';
+          // LOOP REQUIRED (multiple books)
+          for (var i = 0; i < items.length; i++) {
+            var v = (items[i] && items[i].volumeInfo) ? items[i].volumeInfo : {};
 
-          html += '<div class="cover">';
-          if (img) {
-            html += '<img src="' + img + '" alt="Book cover">';
-          } else {
-            html += '<div class="row"><span class="label">Cover:</span> N/A</div>';
+            var title = v.title || "No title";
+            var authors = (v.authors && v.authors.length) ? v.authors.join(", ") : "N/A";
+            var publishedDate = v.publishedDate || "N/A";
+            var description = v.description || "";
+            var infoLink = v.infoLink || "";
+
+            var img = "";
+            if (v.imageLinks) {
+              img = v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || "";
+            }
+
+            // Keep the description short so the cards stay clean
+            var snippet = description;
+            if (snippet.length > 160) snippet = snippet.substring(0, 160) + "...";
+            if (!snippet) snippet = "No description available.";
+
+            var card = '';
+            card += '<div class="book">';
+
+            if (img) {
+              card += '<img class="thumb" src="' + img + '" alt="Book cover">';
+            }
+
+            card += '<div class="book-title">' + title + '</div>';
+            card += '<div class="book-meta"><strong>Author(s):</strong> ' + authors + '</div>';
+            card += '<div class="book-meta"><strong>Published:</strong> ' + publishedDate + '</div>';
+            card += '<div class="snippet">' + snippet + '</div>';
+
+            if (infoLink) {
+              card += '<div class="links"><a href="' + infoLink + '" target="_blank">More Info</a></div>';
+            }
+
+            card += '</div>';
+
+            $("#results").append(card);
           }
-          html += '</div>';
-
-          html += '<div class="details">';
-          html += '<div class="row"><span class="label">Title:</span> ' + title + '</div>';
-          html += '<div class="row"><span class="label">Author(s):</span> ' + authors + '</div>';
-          html += '<div class="row"><span class="label">Publisher:</span> ' + publisher + '</div>';
-          html += '<div class="row"><span class="label">Published Date:</span> ' + publishedDate + '</div>';
-          html += '<div class="row"><span class="label">Pages:</span> ' + pageCount + '</div>';
-          html += '<div class="row"><span class="label">Categories:</span> ' + categories + '</div>';
-          html += '<div class="row"><span class="label">Language:</span> ' + language + '</div>';
-
-          if (previewLink) {
-            html += '<div class="row"><span class="label">Preview:</span> <a href="' + previewLink + '" target="_blank">Open Preview</a></div>';
-          }
-          if (infoLink) {
-            html += '<div class="row"><span class="label">More Info:</span> <a href="' + infoLink + '" target="_blank">Open Info Page</a></div>';
-          }
-
-          html += '<div class="desc"><span class="label">Description:</span><br>' + description + '</div>';
-          html += '</div>';
-
-          html += '</div>';
-
-          $("#content").html(html);
         })
         .fail(function () {
-          $("#content").html(
-            '<div class="error"><strong>Error:</strong> Could not load google-books-book.json. ' +
+          $("#summary").html(
+            '<div class="error"><strong>Error:</strong> Could not load google-books-search.json. ' +
             'Make sure the JSON file is in the same folder as this page and test it on the live website (not file://).</div>'
           );
         });
