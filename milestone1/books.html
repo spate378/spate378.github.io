@@ -94,10 +94,12 @@
     .error strong{ color:#991b1b; }
     a{ color:#1d4ed8; }
   </style>
-
-  <!-- Load and handle data from the JSON files -->
+  <!--End CSS-->
+  
+  <!-- Load and handle data from the JSON files-->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
+
 <body>
   <div class="container">
     <div class="card">
@@ -109,85 +111,88 @@
         <a href="../index.html">Home</a>
         <a href="search.html">Search Results Page</a>
       </div>
-      <div id="content">Loading the book data.....</div>
+      <div id="content">Now loading the book data.....</div>
     </div>
   </div>
 
-  <!-- Run the code and laod the json file-->
   <script>
     $(function () {
+      function addLine(label, value) {
+        return $('<div class="row">')
+          .append('<span class="label">' + label + '</span> ')
+          .append(document.createTextNode(value));
+      }
+
       $.getJSON("google-books-book.json")
         .done(function (data) {
-          // Store book details from the JSON file
-          var bookInfo = data.volumeInfo || {};
 
-          //Set defaults inacase something is missing
-          var titleText = bookInfo.title || "No title available";
-          var authorText = (bookInfo.authors && bookInfo.authors.length)
-            ? bookInfo.authors.join(", ")
-            : "N/A";
-          var publisherText = bookInfo.publisher || "N/A";
-          var publishedText = bookInfo.publishedDate || "N/A";
-          var pagesText = bookInfo.pageCount || "N/A";
-          var categoryText = (bookInfo.categories && bookInfo.categories.length)
-            ? bookInfo.categories.join(", ")
-            : "N/A";
-          var languageText = bookInfo.language || "N/A";
-          var descriptionText = bookInfo.description || "No description available.";
-          var previewUrl = bookInfo.previewLink || "";
-          var infoUrl = bookInfo.infoLink || "";
-
-          // Check for ISBN
-          var isbnText = "N/A";
-          if (bookInfo.industryIdentifiers && bookInfo.industryIdentifiers.length) {
-            isbnText = bookInfo.industryIdentifiers[0].identifier || "N/A";
+          var bookData = data.volumeInfo || {};
+          var book_title = bookData.title ? bookData.title : "No title available";
+          var author_name = (bookData.authors && bookData.authors.length) ? bookData.authors.join(", ") : "N/A";
+          var pub_name = bookData.publisher ? bookData.publisher : "N/A";
+          var pub_date = bookData.publishedDate ? bookData.publishedDate : "N/A";
+          var book_pages = bookData.pageCount ? bookData.pageCount : "N/A";
+          var book_genres = (bookData.categories && bookData.categories.length) ? bookData.categories.join(", ") : "N/A";
+          var lang = bookData.language ? bookData.language : "N/A";
+          var description = bookData.description ? bookData.description : "No description available.";
+          var isbnNum = "N/A";
+          
+          if (bookData.industryIdentifiers && bookData.industryIdentifiers.length > 0) {
+            isbnNum = bookData.industryIdentifiers[0].identifier ? bookData.industryIdentifiers[0].identifier : "N/A";
           }
 
-          // Cover for teh book (image)
-          var coverImg = "";
-          if (bookInfo.imageLinks) {
-            coverImg = bookInfo.imageLinks.thumbnail || bookInfo.imageLinks.smallThumbnail || "";
+          var cover = "";
+          if (bookData.imageLinks) {
+            cover = bookData.imageLinks.thumbnail || bookData.imageLinks.smallThumbnail || "";
           }
-          // Build the page
-          var html = '';
-          html += '<div class="grid">';
-          html += '<div class="cover">';
-          if (coverImg) {
-            html += '<img src="' + coverImg + '" alt="Book cover">';
+          var $layoutGrid = $('<div class="grid">');
+          var $coverSection = $('<div class="cover">');
+          if (cover) {
+            $coverSection.append('<img src="' + cover + '" alt="Book cover">');
           } else {
-            html += '<div class="row"><span class="label">Cover:</span> N/A</div>';
+            $coverSection.append(addLine("Cover:", "N/A"));
           }
-          html += '</div>';
+          var $book_details = $('<div class="details">');
+          $book_details.append(addLine("Title:", book_title));
+          $book_details.append(addLine("Author(s):", author_name));
+          $book_details.append(addLine("Publisher:", pub_name));
+          $book_details.append(addLine("Published Date:", pub_date));
+          $book_details.append(addLine("Pages:", book_pages));
+          $book_details.append(addLine("Categories:", book_genres));
+          $book_details.append(addLine("Language:", lang));
+          $book_details.append(addLine("ISBN:", isbnNum));
 
-          html += '<div class="details">';
-          html += '<div class="row"><span class="label">Title:</span> ' + titleText + '</div>';
-          html += '<div class="row"><span class="label">Author(s):</span> ' + authorText + '</div>';
-          html += '<div class="row"><span class="label">Publisher:</span> ' + publisherText + '</div>';
-          html += '<div class="row"><span class="label">Published Date:</span> ' + publishedText + '</div>';
-          html += '<div class="row"><span class="label">Pages:</span> ' + pagesText + '</div>';
-          html += '<div class="row"><span class="label">Categories:</span> ' + categoryText + '</div>';
-          html += '<div class="row"><span class="label">Language:</span> ' + languageText + '</div>';
-          html += '<div class="row"><span class="label">ISBN:</span> ' + isbnText + '</div>';
+          if (bookData.previewLink) {
+            $book_details.append(
+              $('<div class="row">')
+                .append('<span class="label">Preview:</span> ')
+                .append('<a href="' + bookData.previewLink + '" target="_blank">Open Preview</a>')
+            );
+          }
+          if (bookData.infoLink) {
+            $book_details.append(
+              $('<div class="row">')
+            .append('<span class="label">More Info:</span> ')
+            .append('<a href="' + bookData.infoLink + '" target="_blank">Open Info Page</a>')
+            );
+          }
 
-          if (previewUrl) {
-            html += '<div class="row"><span class="label">Preview:</span> <a href="' + previewUrl + '" target="_blank">Open Preview</a></div>';
-          }
-          if (infoUrl) {
-            html += '<div class="row"><span class="label">More Info:</span> <a href="' + infoUrl + '" target="_blank">Open Info Page</a></div>';
-          }
-          html += '<div class="desc"><span class="label">Description:</span><br>' + descriptionText + '</div>';
-          html += '</div>';
-          html += '</div>';
-          $("#content").html(html);
+          var $descBox = $('<div class="desc">')
+            .append('<span class="label">Description:</span><br>')
+            .append(description);
+
+          $book_details.append($descBox);
+          $layoutGrid.append($coverSection);
+          $layoutGrid.append($book_details);
+
+      $("#content").empty().append($layoutGrid);
         })
-        .fail(function () {
-
-          // If JSON data does not load or fails data
-          $("#content").html(
-            '<div class="error"><strong>Error:</strong> Could not load the book data.</div>'
-          );
-        });
+.fail(function () {
+  $("#content").html(
+    '<div class="error"><strong>Error:</strong> There was an issue loading the file.</div>'
+  );
+});
     });
-  </script>
+</script>
 </body>
 </html>
