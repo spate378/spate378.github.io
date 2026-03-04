@@ -150,7 +150,7 @@
           }
           // Loop through each book
           for (var i = 0; i < books.length; i++) {
-            var bookInfo = books[i].volumeInfo || {}; // store the information for the book
+            var bookInfo = (books[i] && books[i].volumeInfo) ? books[i].volumeInfo : {}; // store the information for the book
 
             var titleText = bookInfo.title || "No title";
             var authorText = (bookInfo.authors && bookInfo.authors.length)
