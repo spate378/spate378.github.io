@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Milestone 1 - Book Search Results</title>
 
-  <!-- CSS code for formatting -->
+  <!-- CSS for formatting -->
   <style>
     body{
       margin:0;
@@ -109,12 +109,13 @@
       background:#fff;
       border:1px solid #fca5a5;
       border-radius:12px;
-      padding:16px;
+      padding:18px;
       margin-top: 12px;
     }
     .error strong{ color:#991b1b; }
   </style>
-
+<!--End CSS-->
+  
   <!-- Load the jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
@@ -140,62 +141,58 @@
       // Load the JSON file
       $.getJSON("google-books-search.json")
         .done(function (data) {
-          var books = data.items || [];
-          $("#summary").html("Books found: <strong>" + books.length + "</strong>");
+          var book_list = data.items || [];
+          $("#summary").html("The Books found: <strong>" + book_list.length + "</strong>");
 
           // If no books exist, stop here
-          if (books.length === 0) {
-            $("#results").html("<div>No books found.</div>");
+          if (book_list.length === 0) {
+            $("#results").html("<div>There were no books found.</div>");
             return;
           }
           // Loop through each book
-          for (var i = 0; i < books.length; i++) {
-            var bookInfo = (books[i] && books[i].volumeInfo) ? books[i].volumeInfo : {}; // store the information for the book
-
-            var titleText = bookInfo.title || "No title";
-            var authorText = (bookInfo.authors && bookInfo.authors.length)
-              ? bookInfo.authors.join(", ")
-              : "N/A";
-            var publishedText = bookInfo.publishedDate || "N/A";
-            var descriptionText = bookInfo.description || "";
-            var infoLink = bookInfo.infoLink || "";
+          for (var i = 0; i < book_list.length; i++) {
+        
+            var book_Info = (book_list[i] && book_list[i].volumeInfo) ? book_list[i].volumeInfo : {};
+            var book_title = book_Info.title || "No title";
+            var author_name = (book_Info.authors && book_Info.authors.length)
+            ? book_Info.authors.join(", ") : "N/A";
+            var pub_date = book_Info.publishedDate || "N/A";
+            var book_desc = book_Info.description || "";
+            var info_link = book_Info.infoLink || "";
 
             // Get the book cover(image)
-            var coverImg = "";
-            if (bookInfo.imageLinks) {
-              coverImg = bookInfo.imageLinks.thumbnail || bookInfo.imageLinks.smallThumbnail || "";
+            var book_cover = "";
+            if (book_Info.imageLinks) {
+              book_cover = book_Info.imageLinks.thumbnail || book_Info.imageLinks.smallThumbnail || "";
             }
-            var shortDesc = descriptionText;
-            if (shortDesc.length > 160) {
-              shortDesc = shortDesc.substring(0, 160) + "...";
+            var short_desc = book_desc;
+            if (short_desc.length > 160) {
+              short_desc = short_desc.substring(0, 160) + "...";
             }
-            if (!shortDesc) {
-              shortDesc = "No description available.";
-            }
-
-            // Create the book card
-            var cardHtml = "";
-            cardHtml += '<div class="book">';
-
-            if (coverImg) {
-              cardHtml += '<img class="thumb" src="' + coverImg + '" alt="Book cover">';
+            if (!short_desc) {
+              short_desc = "No description available.";
             }
 
-            cardHtml += '<div class="book-title">' + titleText + '</div>';
-            cardHtml += '<div class="book-meta"><strong>Author(s):</strong> ' + authorText + '</div>';
-            cardHtml += '<div class="book-meta"><strong>Published:</strong> ' + publishedText + '</div>';
-            cardHtml += '<div class="snippet">' + shortDesc + '</div>';
-
-            if (infoLink) {
-              cardHtml += '<div class="links"><a href="' + infoLink + '" target="_blank">More Info</a></div>';
+            // Create the box which shows the information for each books
+            var book_card = "";
+            book_card += '<div class="book">';
+            if (book_cover) {
+              book_card += '<img class="thumb" src="' + book_cover + '" alt="Book cover">';
             }
-            cardHtml += '</div>';
-            $("#results").append(cardHtml);
+            book_card += '<div class="book-title">' + book_title + '</div>';
+            book_card += '<div class="book-meta"><strong>Author(s):</strong> ' + author_name + '</div>';
+            book_card += '<div class="book-meta"><strong>Published:</strong> ' + pub_date + '</div>';
+            book_card += '<div class="snippet">' + short_desc + '</div>';
+            if (info_link) {
+              book_card += '<div class="links"><a href="' + info_link + '" target="_blank">More Info</a></div>';
+            }
+            book_card += '</div>';
+            $("#results").append(book_card);
           }
         })
         // If JSON fails or can not load
         .fail(function () {
-          $("#summary").html(
+        $("#summary").html(
         '<div class="error"><strong>Error:</strong> Could not load the search data.</div>'
         );
     });
