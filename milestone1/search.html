@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Milestone 1 - Book Search Results</title>
 
+  <!-- CSS code for formatting -->
   <style>
     body{
       margin:0;
@@ -114,89 +115,90 @@
     .error strong{ color:#991b1b; }
   </style>
 
+  <!-- Load the jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
-
 <body>
   <div class="container">
     <div class="card">
       <h1>Milestone 1: Book Search Results</h1>
-      <p class="subtitle">This page reads <strong>google-books-search.json</strong> using JavaScript and jQuery and displays multiple books using a loop.</p>
-
+      <p class="subtitle">
+        Display multiple books by using a loop
+      </p>
       <div class="nav">
         <a href="../index.html">Home</a>
         <a href="books.html">Single Book Page</a>
       </div>
-
-      <div id="summary">Loading search results...</div>
+      <div id="summary">Loading the book search results.....</div>
       <div id="results" class="grid"></div>
-
-      <p class="small">
-        Note: If this page is opened as a local file (file://), the JSON may not load. Test on your live GitHub Pages site.
-      </p>
     </div>
   </div>
 
+  <!-- Run the code and load the JSON file -->
   <script>
     $(function () {
+      // Load the JSON file
       $.getJSON("google-books-search.json")
         .done(function (data) {
-          var items = data.items || [];
+          var books = data.items || [];
+          $("#summary").html("Books found: <strong>" + books.length + "</strong>");
 
-          $("#summary").html("Books found: <strong>" + items.length + "</strong>");
-
-          if (items.length === 0) {
-            $("#results").html("<div>No books found in this JSON file.</div>");
+          // If no books exist, stop here
+          if (books.length === 0) {
+            $("#results").html("<div>No books found.</div>");
             return;
           }
+          // Loop through each book
+          for (var i = 0; i < books.length; i++) {
+            var bookInfo = books[i].volumeInfo || {}; // store the information for the book
 
-          // LOOP REQUIRED (multiple books)
-          for (var i = 0; i < items.length; i++) {
-            var v = (items[i] && items[i].volumeInfo) ? items[i].volumeInfo : {};
+            var titleText = bookInfo.title || "No title";
+            var authorText = (bookInfo.authors && bookInfo.authors.length)
+              ? bookInfo.authors.join(", ")
+              : "N/A";
+            var publishedText = bookInfo.publishedDate || "N/A";
+            var descriptionText = bookInfo.description || "";
+            var infoLink = bookInfo.infoLink || "";
 
-            var title = v.title || "No title";
-            var authors = (v.authors && v.authors.length) ? v.authors.join(", ") : "N/A";
-            var publishedDate = v.publishedDate || "N/A";
-            var description = v.description || "";
-            var infoLink = v.infoLink || "";
-
-            var img = "";
-            if (v.imageLinks) {
-              img = v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || "";
+            // Get the book cover(image)
+            var coverImg = "";
+            if (bookInfo.imageLinks) {
+              coverImg = bookInfo.imageLinks.thumbnail || bookInfo.imageLinks.smallThumbnail || "";
+            }
+            var shortDesc = descriptionText;
+            if (shortDesc.length > 160) {
+              shortDesc = shortDesc.substring(0, 160) + "...";
+            }
+            if (!shortDesc) {
+              shortDesc = "No description available.";
             }
 
-            // Keep the description short so the cards stay clean
-            var snippet = description;
-            if (snippet.length > 160) snippet = snippet.substring(0, 160) + "...";
-            if (!snippet) snippet = "No description available.";
+            // Create the book card
+            var cardHtml = "";
+            cardHtml += '<div class="book">';
 
-            var card = '';
-            card += '<div class="book">';
-
-            if (img) {
-              card += '<img class="thumb" src="' + img + '" alt="Book cover">';
+            if (coverImg) {
+              cardHtml += '<img class="thumb" src="' + coverImg + '" alt="Book cover">';
             }
 
-            card += '<div class="book-title">' + title + '</div>';
-            card += '<div class="book-meta"><strong>Author(s):</strong> ' + authors + '</div>';
-            card += '<div class="book-meta"><strong>Published:</strong> ' + publishedDate + '</div>';
-            card += '<div class="snippet">' + snippet + '</div>';
+            cardHtml += '<div class="book-title">' + titleText + '</div>';
+            cardHtml += '<div class="book-meta"><strong>Author(s):</strong> ' + authorText + '</div>';
+            cardHtml += '<div class="book-meta"><strong>Published:</strong> ' + publishedText + '</div>';
+            cardHtml += '<div class="snippet">' + shortDesc + '</div>';
 
             if (infoLink) {
-              card += '<div class="links"><a href="' + infoLink + '" target="_blank">More Info</a></div>';
+              cardHtml += '<div class="links"><a href="' + infoLink + '" target="_blank">More Info</a></div>';
             }
-
-            card += '</div>';
-
-            $("#results").append(card);
+            cardHtml += '</div>';
+            $("#results").append(cardHtml);
           }
         })
+        // If JSON fails or can not load
         .fail(function () {
           $("#summary").html(
-            '<div class="error"><strong>Error:</strong> Could not load google-books-search.json. ' +
-            'Make sure the JSON file is in the same folder as this page and test it on the live website (not file://).</div>'
-          );
-        });
+        '<div class="error"><strong>Error:</strong> Could not load the search data.</div>'
+        );
+    });
     });
   </script>
 </body>
