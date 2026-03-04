@@ -135,7 +135,7 @@
     </div>
   </div>
 
-  <!-- Run the code and load the JSON file -->
+  <!-- Run the code and load teh JSON file -->
   <script>
     $(function () {
       // Load the JSON file
@@ -167,7 +167,7 @@
             }
             var short_desc = book_desc;
             if (short_desc.length > 160) {
-              short_desc = short_desc.substring(0, 160) + "...";
+              short_desc = short_desc.substring(0, 140) + "...";
             }
             if (!short_desc) {
               short_desc = "No description available.";
@@ -200,4 +200,5 @@
   </script>
 </body>
 </html>
+
 
