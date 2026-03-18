@@ -20,19 +20,17 @@ function searchBooks() {
     return;
   }
 
-  var base = "https://www.googleapis.com/books/v1/volumes?q=" + encodeURIComponent(termSearch);
-  var call1 = $.getJSON(base + "&maxResults=40&startIndex=0");
-  var call2 = $.getJSON(base + "&maxResults=20&startIndex=40");
+  var apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" 
+    + encodeURIComponent(termSearch) 
+    + "&maxResults=40&startIndex=0";
 
-  $.when(call1, call2).done(function (data1, data2) {
-    var books1 = data1[0].items || [];
-    var books2 = data2[0].items || [];
-    allBooks = books1.concat(books2);
+  $.getJSON(apiUrl, function (data) {
+    allBooks = data.items || [];
     $("#summary").html("Books found: " + allBooks.length);
     buildPages();
     showPage(1);
   }).fail(function () {
-    $("#summary").html("<span style='color:red'>Error fetching results. Please try again.</span>");
+    $("#summary").html("<span style='color:red'>Error fetching results. Please try again in a moment.</span>");
   });
 }
 
