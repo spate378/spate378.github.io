@@ -20,9 +20,10 @@ function searchBooks() {
     return;
   }
 
-  var apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" 
-    + encodeURIComponent(termSearch) 
-    + "&maxResults=40&startIndex=0";
+var apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" 
+  + encodeURIComponent(termSearch) 
+  + "&maxResults=40&startIndex=0"
+  + "&key=AIzaSyA6lSYNLDYST73FsnRTEKXHqX7wbpi90qU";
 
   $.getJSON(apiUrl, function (data) {
     allBooks = data.items || [];
