@@ -138,3 +138,32 @@ h1{
 .error strong{
   color:#991b1b;
 }
+
+.details-layout {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.details-img img {
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.details-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.details-info h2 {
+  color: #0b1f3a;
+  margin: 0 0 12px 0;
+}
+
+.details-info p {
+  margin: 8px 0;
+  line-height: 1.6;
+  color: #374151;
+}
