@@ -1,1 +1,25 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Bookshelf</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>My Bookshelf</h1>
+      <p class="subtitle">A curated collection of books from my public Google Books shelf.</p>
+      <div class="nav">
+        <a href="index.html">Home</a>
+        <a href="bookshelf.html">The Bookshelf</a>
+      </div>
+      <div id="summary">Loading bookshelf...</div>
+      <div id="results" class="grid"></div>
+    </div>
+  </div>
+  <script src="bookshelf.js"></script>
+</body>
+</html>
