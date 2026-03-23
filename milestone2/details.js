@@ -1,43 +1,37 @@
 $(document).ready(function () {
-  var params = new URLSearchParams(window.location.search);
-  var bookId = params.get("id");
-
+  
+  var pageParams = new URLSearchParams(window.location.search);
+  var bookId = pageParams.get("id");
   if (!bookId) {
-    $("#detailsContent").html("<p style='color:red'>No book ID provided.</p>");
-    return;
+    $("#detailsContent").html("<p style='color:red'>Error, No book ID entered.</p>"); return;
   }
+  var requestUrl = "https://www.googleapis.com/books/v1/volumes/" + bookId + "?key=AIzaSyA6lSYNLDYST73FsnRTEKXHqX7wbpi90qU";
 
-  var apiUrl = "https://www.googleapis.com/books/v1/volumes/" + bookId + "?key=AIzaSyA6lSYNLDYST73FsnRTEKXHqX7wbpi90qU";
-
-  $.getJSON(apiUrl, function (data) {
-    var book = data.volumeInfo;
-    var title = book.title || "No title";
-    var authors = book.authors ? book.authors.join(", ") : "N/A";
-    var publisher = book.publisher || "N/A";
-    var description = book.description || "No description available.";
-    var img = book.imageLinks ? book.imageLinks.large || book.imageLinks.thumbnail : "";
-    var price = "N/A";
-
+  $.getJSON(requestUrl, function (data) {
+    var bookData = data.volumeInfo;
+    var bookTitle = bookData.title || "No title found";
+    var bookAuthor = bookData.authors ? bookData.authors.join(", ") : "N/A";
+    var publisher = bookData.publisher || "N/A";
+    var description = bookData.description || "No description.";
+    var bookCover = bookData.imageLinks ? bookData.imageLinks.large || bookData.imageLinks.thumbnail : "";
+    var bookPrice = "N/A";
     if (data.saleInfo && data.saleInfo.listPrice) {
-      price = "$" + data.saleInfo.listPrice.amount + " " + data.saleInfo.listPrice.currencyCode;
+      bookPrice = "$" + data.saleInfo.listPrice.amount + " " + data.saleInfo.listPrice.currencyCode;
     }
-
-    var html = "<div class='details-layout'>";
-
-    if (img) {
-      html += "<div class='details-img'><img src='" + img + "'></div>";
+    var bookHtml = "<div class='details-layout'>";
+    if (bookCover) {
+      bookHtml += "<div class='details-img'><img src='" + bookCover + "'></div>";
     }
+    bookHtml += "<div class='details-info'>";
+    bookHtml += "<h2>" + bookTitle + "</h2>";
+    bookHtml += "<p><strong>Author:</strong> " + bookAuthor + "</p>";
+    bookHtml += "<p><strong>Publisher:</strong> " + publisher + "</p>";
+    bookHtml += "<p><strong>Price:</strong> " + bookPrice + "</p>";
+    bookHtml += "<p><strong>Description:</strong> " + description + "</p>";
+    bookHtml += "</div></div>";
 
-    html += "<div class='details-info'>";
-    html += "<h2>" + title + "</h2>";
-    html += "<p><strong>Authors:</strong> " + authors + "</p>";
-    html += "<p><strong>Publisher:</strong> " + publisher + "</p>";
-    html += "<p><strong>Price:</strong> " + price + "</p>";
-    html += "<p><strong>Description:</strong> " + description + "</p>";
-    html += "</div></div>";
-
-    $("#detailsContent").html(html);
+    $("#detailsContent").html(bookHtml);
   }).fail(function () {
-    $("#detailsContent").html("<span style='color:red'>Error loading book details. Please try again.</span>");
-  });
+    $("#detailsContent").html("<span style='color:red'>Error, Somethign went wrong.</span>");
+});
 });
