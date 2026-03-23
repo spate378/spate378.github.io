@@ -5,10 +5,11 @@ $(document).ready(function () {
   $("#searchBtn").click(function () {
     searchBooks();
   });
+  
   $("#pageSelect").change(function () {
     var pageNum = parseInt($(this).val());
     showPage(pageNum);
-  });
+});
 });
 
 function searchBooks() {
@@ -22,8 +23,10 @@ var apiUrl = "https://www.googleapis.com/books/v1/volumes?q="
   + encodeURIComponent(termSearch) 
   + "&maxResults=40&startIndex=0"
   + "&key=AIzaSyA6lSYNLDYST73FsnRTEKXHqX7wbpi90qU";
+  
   $.getJSON(apiUrl, function (data) {
     allBooks = data.items || [];
+    
     $("#summary").html("Showing the book results for: " + allBooks.length);
     buildPages();
     showPage(1);
@@ -40,7 +43,6 @@ function buildPages() {
   }
 }
 function showPage(pageNum) {
-  $("#results").empty();
   var start = (pageNum - 1) * pageResults;
   var end = start + pageResults;
 
@@ -57,6 +59,7 @@ function showPage(pageNum) {
     html += "<p class='book-title'><a href='details.html?id=" + allBooks[i].id + "'>" + title + "</a></p>";
     html += "<p class='book-meta'>" + authors + "</p>";
     html += "</div>";
+   
     $("#results").append(html); 
-  }
+ }
 }
