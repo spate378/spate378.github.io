@@ -5,7 +5,6 @@ $(document).ready(function () {
   $("#searchBtn").click(function () {
     searchBooks();
   });
-
   $("#pageSelect").change(function () {
     var pageNum = parseInt($(this).val());
     showPage(pageNum);
@@ -15,23 +14,21 @@ $(document).ready(function () {
 function searchBooks() {
   var termSearch = $("#searchInput").val().trim();
   if (termSearch === "") {
-    $("#summary").html("Please enter a search term.");
+    $("#summary").html("Enter a term to search.");
     $("#results").empty();
     return;
   }
-
 var apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" 
   + encodeURIComponent(termSearch) 
   + "&maxResults=40&startIndex=0"
   + "&key=AIzaSyA6lSYNLDYST73FsnRTEKXHqX7wbpi90qU";
-
   $.getJSON(apiUrl, function (data) {
     allBooks = data.items || [];
-    $("#summary").html("Books found: " + allBooks.length);
+    $("#summary").html("Showing the book results for: " + allBooks.length);
     buildPages();
     showPage(1);
   }).fail(function () {
-    $("#summary").html("<span style='color:red'>Error fetching results. Please try again in a moment.</span>");
+    $("#summary").html("<span style='color:red'>Error, Something went wrong.</span>");
   });
 }
 
@@ -42,7 +39,6 @@ function buildPages() {
     $("#pageSelect").append("<option value='" + i + "'>" + i + "</option>");
   }
 }
-
 function showPage(pageNum) {
   $("#results").empty();
   var start = (pageNum - 1) * pageResults;
@@ -53,15 +49,14 @@ function showPage(pageNum) {
     var title = book.title || "No title";
     var authors = book.authors ? book.authors.join(", ") : "N/A";
     var img = book.imageLinks ? book.imageLinks.thumbnail : "";
-
     var html = "<div class='book'>";
+  
     if (img) {
       html += "<img class='thumb' src='" + img + "'>";
     }
     html += "<p class='book-title'><a href='details.html?id=" + allBooks[i].id + "'>" + title + "</a></p>";
     html += "<p class='book-meta'>" + authors + "</p>";
     html += "</div>";
-
-    $("#results").append(html);
+    $("#results").append(html); 
   }
 }
