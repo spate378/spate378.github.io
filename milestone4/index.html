@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Milestone 4 - Movie Search SPA</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/4.2.0/mustache.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Movie Search</h1>
+      <p class="subtitle">Search for movies or browse my personal shelf — powered by the TMDB API.</p>
+      <div class="nav">
+        <a href="#" id="navSearch" class="nav-active">Search</a>
+        <a href="#" id="navShelf">My Shelf</a>
+      </div>
+
+      <div id="searchSection">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search by movie title...">
+          <button id="searchBtn">Search</button>
+      </div>
+        <div id="summary" class="summary-text">Enter a keyword to start searching for a movie.</div>
+        <div class="view-toggle" id="viewToggle" style="display:none;">
+          <button id="gridBtn" class="toggle-btn active-toggle">Grid View</button>
+          <button id="listBtn" class="toggle-btn">List View</button>
+        </div>
+        <div id="pagination" class="pagination"></div>
+        <div id="results" class="grid"></div>
+      </div>
+
+      <div id="shelfSection" style="display:none;">
+        <p class="subtitle">Check out what's trending and the highest rated movies.</p>
+        <div class="shelf-tabs">
+          <button id="trendingBtn" class="shelf-tab active-tab">Trending</button>
+          <button id="bestBtn" class="shelf-tab">Best Rated</button>
+        </div>
+        <div id="shelfSummary" class="summary-text">Loading shelf.....</div>
+        <div class="view-toggle">
+          <button id="shelfGridBtn" class="toggle-btn active-toggle">Grid View</button>
+          <button id="shelfListBtn" class="toggle-btn">List View</button>
+        </div>
+        <div id="shelfResults" class="grid"></div>
+      </div>
+
+      <div id="detailsSection" style="display:none;">
+        <button id="backBtn" class="back-btn">Back</button>
+        <div id="detailsContent">Loading....</div>
+      </div>
+    </div>
+</div>
+  <!-- Mustache movie card grid -->
+  <script id="cardTemplate" type="x-tmpl-mustache">
+    {{#movies}}
+    <div class="movie" data-id="{{id}}">
+      {{#poster}}
+        <img class="thumb" src="https://image.tmdb.org/t/p/w300{{poster}}" alt="{{title}}">
+      {{/poster}} {{^poster}}
+      <div class="no-cover">No Poster</div>
+      {{/poster}}
+      <p class="movie-title">{{title}}</p>
+      <p class="movie-meta">{{year}} &nbsp; {{rating}}</p>
+    </div>
+    {{/movies}}
+  </script>
+  <!-- Mustache movie card list -->
+  <script id="listTemplate" type="x-tmpl-mustache">
+    {{#movies}}
+    <div class="movie list-item" data-id="{{id}}">
+      {{#poster}}
+        <img class="list-thumb" src="https://image.tmdb.org/t/p/w92{{poster}}" alt="{{title}}">
+      {{/poster}} {{^poster}}
+        <div class="no-cover list-no-cover">No Poster</div>
+      {{/poster}}
+      <div class="list-info">
+        <p class="movie-title">{{title}}</p>
+        <p class="movie-meta">{{year}} &nbsp; {{rating}}</p>
+        <p class="movie-overview">{{overview}}</p>
+      </div>
+    </div>
+    {{/movies}}
+  </script>
+  <!-- Mustache movie details -->
+  <script id="detailsTemplate" type="x-tmpl-mustache">
+    <div class="details-layout">
+      {{#poster}}
+        <div class="details-img">
+        <img src="https://image.tmdb.org/t/p/w342{{poster}}" alt="{{title}}">
+        </div> {{/poster}}
+      <div class="details-info">
+        <h2>{{title}}</h2>
+        <p><strong>Release Date:</strong> {{releaseDate}}</p>
+        <p><strong>Rating:</strong> {{rating}} / 10</p>
+        <p><strong>Language:</strong> {{language}}</p>
+        <p><strong>Genres:</strong> {{genres}}</p>
+        <p><strong>Runtime:</strong> {{runtime}}</p>
+        <p><strong>Overview:</strong> {{overview}}</p>
+    </div>
+    </div>
+  </script>
+<script src="script.js"></script>
+</body>
+</html>
