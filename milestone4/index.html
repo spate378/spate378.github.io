@@ -58,11 +58,12 @@
     <div class="movie" data-id="{{id}}">
       {{#poster}}
         <img class="thumb" src="https://image.tmdb.org/t/p/w300{{poster}}" alt="{{title}}">
-      {{/poster}} {{^poster}}
-      <div class="no-cover">No Poster</div>
+      {{/poster}}
+      {{^poster}}
+        <div class="no-cover">No Poster</div>
       {{/poster}}
       <p class="movie-title">{{title}}</p>
-      <p class="movie-meta">{{year}} &nbsp; {{rating}}</p>
+      <p class="movie-meta">{{year}} &nbsp;⭐ {{rating}}</p>
     </div>
     {{/movies}}
   </script>
@@ -72,12 +73,13 @@
     <div class="movie list-item" data-id="{{id}}">
       {{#poster}}
         <img class="list-thumb" src="https://image.tmdb.org/t/p/w92{{poster}}" alt="{{title}}">
-      {{/poster}} {{^poster}}
+      {{/poster}}
+      {{^poster}}
         <div class="no-cover list-no-cover">No Poster</div>
       {{/poster}}
       <div class="list-info">
         <p class="movie-title">{{title}}</p>
-        <p class="movie-meta">{{year}} &nbsp; {{rating}}</p>
+        <p class="movie-meta">{{year}} &nbsp;⭐ {{rating}}</p>
         <p class="movie-overview">{{overview}}</p>
       </div>
     </div>
@@ -88,8 +90,9 @@
     <div class="details-layout">
       {{#poster}}
         <div class="details-img">
-        <img src="https://image.tmdb.org/t/p/w342{{poster}}" alt="{{title}}">
-        </div> {{/poster}}
+          <img src="https://image.tmdb.org/t/p/w342{{poster}}" alt="{{title}}">
+        </div>
+      {{/poster}}
       <div class="details-info">
         <h2>{{title}}</h2>
         <p><strong>Release Date:</strong> {{releaseDate}}</p>
@@ -98,7 +101,7 @@
         <p><strong>Genres:</strong> {{genres}}</p>
         <p><strong>Runtime:</strong> {{runtime}}</p>
         <p><strong>Overview:</strong> {{overview}}</p>
-    </div>
+      </div>
     </div>
   </script>
 <script src="script.js"></script>
