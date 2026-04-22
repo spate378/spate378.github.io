@@ -18,22 +18,31 @@ function tmdbGet(url, successFn, failFn) {
     error: failFn
   });
 }
-
+function buildMovieData(m) {
+  var hasPoster = m.poster_path ? true : false;
+  return {
+    id: m.id,
+    title: m.title || "No Title",
+    hasPoster: hasPoster,
+    posterUrl: hasPoster ? "https://image.tmdb.org/t/p/w300" + m.poster_path : "",
+    posterUrlSm: hasPoster ? "https://image.tmdb.org/t/p/w92" + m.poster_path : "",
+    year: m.release_date ? m.release_date.substring(0, 4) : "N/A",
+    rating: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
+    overview: m.overview ? m.overview.substring(0, 120) + "..." : "No description."
+  };
+}
 $(document).ready(function () {
   $("#searchBtn").click(function () {
     searchBooks();
   });
-
   $("#searchInput").keypress(function (e) {
     if (e.which === 13) { searchBooks(); }
   });
-
   $("#navSearch").click(function (e) {
     e.preventDefault();
     showSection("search");
     setActiveNav("navSearch");
   });
-
   $("#navShelf").click(function (e) {
     e.preventDefault();
     showSection("shelf");
@@ -42,7 +51,6 @@ $(document).ready(function () {
       loadBookshelf("trending");
     }
   });
-
   $("#backBtn").click(function () {
     showSection(lastSection);
     if (lastSection === "shelf") {
@@ -51,7 +59,6 @@ $(document).ready(function () {
       setActiveNav("navSearch");
     }
   });
-
   $("#gridBtn").click(function () {
     currentView = "grid";
     $("#results").removeClass("list").addClass("grid");
@@ -59,7 +66,6 @@ $(document).ready(function () {
     $("#listBtn").removeClass("active-toggle");
     showPage(pageNum);
   });
-
   $("#listBtn").click(function () {
     currentView = "list";
     $("#results").removeClass("grid").addClass("list");
@@ -67,7 +73,6 @@ $(document).ready(function () {
     $("#gridBtn").removeClass("active-toggle");
     showPage(pageNum);
   });
-
   $("#shelfGridBtn").click(function () {
     shelfView = "grid";
     $("#shelfResults").removeClass("list").addClass("grid");
@@ -75,7 +80,6 @@ $(document).ready(function () {
     $("#shelfListBtn").removeClass("active-toggle");
     renderShelf(allBooks);
   });
-
   $("#shelfListBtn").click(function () {
     shelfView = "list";
     $("#shelfResults").removeClass("grid").addClass("list");
@@ -83,13 +87,11 @@ $(document).ready(function () {
     $("#shelfGridBtn").removeClass("active-toggle");
     renderShelf(allBooks);
   });
-
   $("#trendingBtn").click(function () {
     $("#trendingBtn").addClass("active-tab");
     $("#bestBtn").removeClass("active-tab");
     loadBookshelf("trending");
   });
-
   $("#bestBtn").click(function () {
     $("#bestBtn").addClass("active-tab");
     $("#trendingBtn").removeClass("active-tab");
@@ -97,7 +99,6 @@ $(document).ready(function () {
   });
 
 });
-
 function showSection(name) {
   $("#searchSection").hide();
   $("#shelfSection").hide();
@@ -111,6 +112,7 @@ function setActiveNav(id) {
   $(".nav a").removeClass("nav-active");
   $("#" + id).addClass("nav-active");
 }
+
 function searchBooks() {
   var termSearch = $("#searchInput").val().trim();
   if (termSearch === "") {
@@ -150,35 +152,20 @@ function buildPages(totalPages) {
         showPage(pg);
       });
       $("#pagination").append($btn);
-  })(i);
+    })(i);
+  }
 }
-}
-
 function showPage(pg) {
   var start = (pg - 1) * pageResults;
   var end = start + pageResults;
   var slice = allBooks.slice(start, end);
-
-  var data = {
-    movies: slice.map(function (m) {
-      return {
-        id: m.id,
-        title: m.title || "No Title",
-        poster: m.poster_path || "",
-        year: m.release_date ? m.release_date.substring(0, 4) : "N/A",
-        rating: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
-        overview: m.overview ? m.overview.substring(0, 120) + "..." : "No description."
-    };
-  })
-};
-
+  var data = { movies: slice.map(buildMovieData) };
   var template = currentView === "list"
     ? $("#listTemplate").html()
     : $("#cardTemplate").html();
-
+  
   var html = Mustache.render(template, data);
   $("#results").html(html);
-
   $("#results").off("click", ".movie").on("click", ".movie", function () {
     lastSection = "search";
     loadDetails($(this).data("id"));
@@ -200,31 +187,19 @@ function loadBookshelf(type) {
   }, function () {
     $("#shelfSummary").html("<span style='color:red'>Error, Something went wrong.</span>");
   });
+
   $("#shelfResults").off("click", ".movie").on("click", ".movie", function () {
     lastSection = "shelf";
     loadDetails($(this).data("id"));
   });
 }
 function renderShelf(movies) {
-  var data = {
-    movies: movies.map(function (m) {
-      return {
-        id: m.id,
-        title: m.title || "No Title",
-        poster: m.poster_path || "",
-        year: m.release_date ? m.release_date.substring(0, 4) : "N/A",
-        rating: m.vote_average ? m.vote_average.toFixed(1) : "N/A",
-        overview: m.overview ? m.overview.substring(0, 120) + "..." : "There is No description."
-      };
-    })
-  };
+  var data = { movies: movies.map(buildMovieData) };
   var template = shelfView === "list"
     ? $("#listTemplate").html()
     : $("#cardTemplate").html();
-
   var html = Mustache.render(template, data);
   $("#shelfResults").html(html);
-
   $("#shelfResults").off("click", ".movie").on("click", ".movie", function () {
     lastSection = "shelf";
     loadDetails($(this).data("id"));
@@ -237,10 +212,11 @@ function loadDetails(bookId) {
   tmdbGet(apiUrl, function (data) {
     var genres = data.genres ? data.genres.map(function (g) { return g.name; }).join(", ") : "N/A";
     var runtime = data.runtime ? data.runtime + " min" : "N/A";
+    var hasPoster = data.poster_path ? true : false;
     var templateData = {
-      
       title: data.title || "No Title",
-      poster: data.poster_path || "",
+      hasPoster: hasPoster,
+      posterUrl: hasPoster ? "https://image.tmdb.org/t/p/w342" + data.poster_path : "",
       releaseDate: data.release_date || "N/A",
       rating: data.vote_average ? data.vote_average.toFixed(1) : "N/A",
       language: data.original_language ? data.original_language.toUpperCase() : "N/A",
@@ -253,5 +229,5 @@ function loadDetails(bookId) {
     $("#detailsContent").html(html);
   }, function () {
     $("#detailsContent").html("<span style='color:red'>Error, Something went wrong.</span>");
-});
+  });
 }
