@@ -52,31 +52,33 @@
       </div>
     </div>
 </div>
+
   <!-- Mustache movie card grid -->
   <script id="cardTemplate" type="x-tmpl-mustache">
     {{#movies}}
     <div class="movie" data-id="{{id}}">
-      {{#poster}}
-        <img class="thumb" src="https://image.tmdb.org/t/p/w300{{poster}}" alt="{{title}}">
-      {{/poster}}
-      {{^poster}}
+      {{#hasPoster}}
+        <img class="thumb" src="{{posterUrl}}" alt="{{title}}">
+      {{/hasPoster}}
+      {{^hasPoster}}
         <div class="no-cover">No Poster</div>
-      {{/poster}}
+      {{/hasPoster}}
       <p class="movie-title">{{title}}</p>
       <p class="movie-meta">{{year}} &nbsp;⭐ {{rating}}</p>
     </div>
     {{/movies}}
   </script>
+
   <!-- Mustache movie card list -->
   <script id="listTemplate" type="x-tmpl-mustache">
     {{#movies}}
     <div class="movie list-item" data-id="{{id}}">
-      {{#poster}}
-        <img class="list-thumb" src="https://image.tmdb.org/t/p/w92{{poster}}" alt="{{title}}">
-      {{/poster}}
-      {{^poster}}
+      {{#hasPoster}}
+        <img class="list-thumb" src="{{posterUrlSm}}" alt="{{title}}">
+      {{/hasPoster}}
+      {{^hasPoster}}
         <div class="no-cover list-no-cover">No Poster</div>
-      {{/poster}}
+      {{/hasPoster}}
       <div class="list-info">
         <p class="movie-title">{{title}}</p>
         <p class="movie-meta">{{year}} &nbsp;⭐ {{rating}}</p>
@@ -85,14 +87,15 @@
     </div>
     {{/movies}}
   </script>
+
   <!-- Mustache movie details -->
   <script id="detailsTemplate" type="x-tmpl-mustache">
     <div class="details-layout">
-      {{#poster}}
+      {{#hasPoster}}
         <div class="details-img">
-          <img src="https://image.tmdb.org/t/p/w342{{poster}}" alt="{{title}}">
+          <img src="{{posterUrl}}" alt="{{title}}">
         </div>
-      {{/poster}}
+      {{/hasPoster}}
       <div class="details-info">
         <h2>{{title}}</h2>
         <p><strong>Release Date:</strong> {{releaseDate}}</p>
