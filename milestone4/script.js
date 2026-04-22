@@ -6,7 +6,7 @@ var doneShelf = false;
 var currentView = "grid";
 var shelfView = "grid";
 var shelfType = "";
-var apiKey = "fc1a418da70cf6b5c38e0e2d41f38f01";
+var apiKey = "e510074cf73bc5dcb460a3b09cb78ff7";
 var baseUrl = "https://api.themoviedb.org/3";
 
 $(document).ready(function () {
